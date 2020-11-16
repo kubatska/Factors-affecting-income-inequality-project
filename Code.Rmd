@@ -1,0 +1,99 @@
+---
+title: "Income inequality project"
+output: html_notebook
+---
+
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+```{r}
+df <- read.csv("Data.csv")   
+
+
+plot(df$logGDP_pc_2019, df$GiniIndex,  xlab="logGDP_pc_2019", ylab="GiniIndex") 
+abline(lm(df$GiniIndex ~ df$logGDP_pc_2019))
+
+plot(df$unem, df$GiniIndex,  xlab="unem", ylab="GiniIndex") 
+abline(lm(df$GiniIndex ~ df$unem))
+
+plot(df$growth13.18, df$GiniIndex,  xlab="growth13.18", ylab="GiniIndex") 
+abline(lm(df$GiniIndex ~ df$growth13.18))
+
+plot(df$edu.GDP, df$GiniIndex,  xlab="edu.GDP", ylab="GiniIndex") 
+abline(lm(df$GiniIndex ~ df$edu.GDP))
+
+plot(df$edu_US.m, df$GiniIndex,  xlab="edu_US.m", ylab="GiniIndex") 
+abline(lm(df$GiniIndex ~ df$edu_US.m))
+
+plot(log(df$edu_US.m), df$GiniIndex,  xlab="logedu_US.m", ylab="GiniIndex") 
+abline(lm(df$GiniIndex ~ log(df$edu_US.m)))
+
+plot(df$health.GDP, df$GiniIndex,  xlab="health.GDP", ylab="GiniIndex") 
+abline(lm(df$GiniIndex ~ df$health.GDP))
+
+plot(df$Birth_rate, df$GiniIndex,  xlab="Birth_rate", ylab="GiniIndex") 
+abline(lm(df$GiniIndex ~ df$Birth_rate))
+
+plot(df$ LE.both, df$GiniIndex,  xlab=" LE.both", ylab="GiniIndex") 
+abline(lm(df$GiniIndex ~ df$ LE.both))
+
+plot(df$IncomeTax, df$GiniIndex,  xlab="IncomeTax", ylab="GiniIndex") 
+abline(lm(df$GiniIndex ~ df$IncomeTax))
+
+plot(df$Gender_gap, df$GiniIndex,  xlab="Gender_gap", ylab="GiniIndex") 
+abline(lm(df$GiniIndex ~ df$Gender_gap))
+
+plot(df$Net, df$GiniIndex,  xlab="Net", ylab="GiniIndex") 
+abline(lm(df$GiniIndex ~ df$Net))
+
+plot(df$CPI.2019, df$GiniIndex,  xlab="CPI.2019", ylab="GiniIndex") 
+abline(lm(df$GiniIndex ~ df$CPI.2019))
+```
+
+```{r}
+#hist()
+```
+
+```{r}
+library(usdm)
+library(dplyr)
+library(psych)
+
+df2 = select(df, -c(Country, GiniIndex))
+
+corr.test(df2,
+          use    = "pairwise",
+          method = "pearson",
+          adjust = "none")
+```
+
+```{r}
+lm1 = lm(GiniIndex ~ logGDP_pc_2019 + growth13.18 + unem  + edu.GDP + log(edu_US.m) + health.GDP + Birth_rate + LE.both + IncomeTax + Gender_gap + Net + CPI.2019 , data = df)
+summary(lm1)
+```
+
+```{r}
+lm2 = lm(GiniIndex ~ logGDP_pc_2019  + log(edu_US.m) + Birth_rate + LE.both +  Gender_gap + CPI.2019 , data = df)
+summary(lm2)
+```
+
+```{r}
+lm3 = lm(GiniIndex ~ logGDP_pc_2019 + growth13.18 + unem  + edu.GDP + health.GDP + IncomeTax + CPI.2019 + Net , data = df)
+summary(lm3)
+```
+
+```{r}
+lm4 = lm(GiniIndex ~ IncomeTax + growth13.18 +log(edu_US.m)+ Birth_rate + LE.both + CPI.2019 , data = df)
+summary(lm4)
+```
+
+```{r}
+#F-stats
+Unrestricted = lm(GiniIndex ~ logGDP_pc_2019 + growth13.18 + unem  + edu.GDP + log(edu_US.m) + health.GDP + Birth_rate + LE.both + IncomeTax + Gender_gap + Net + CPI.2019 , data = df)
+
+omitdf <- na.omit(df) 
+Restricted = lm(GiniIndex ~ IncomeTax , data = omitdf)
+summary(Restricted)
+```
